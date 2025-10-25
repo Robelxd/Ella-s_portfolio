@@ -12,7 +12,6 @@ import wedding8 from "@/assets/wedding_8.jpg";
 import street1 from "@/assets/street-1.jpg";
 import street2 from "@/assets/street-2.jpg";
 import street3 from "@/assets/street-3.jpg";
-import landscape from "@/assets/landscape.jpg";
 import portrait from "@/assets/portrait.png";
 import showreel from "@/assets/showreel.mp4";
 import showreel1 from "@/assets/showreel-thumb.png";
@@ -107,18 +106,6 @@ const portfolioItems: PortfolioItem[] = [
     videoUrl: "",
     description: "Stunning formal portrait showcasing elegance and style",
     client: "Fashion Magazine",
-    date: "2024"
-  },
-  { 
-    id: 7, 
-    image: landscape, 
-    title: "Waterfall Paradise", 
-    category: "Landscape", 
-    aspect: "landscape",
-    type: "image",
-    videoUrl: "",
-    description: "Breathtaking natural waterfall surrounded by lush greenery",
-    client: "Nature Magazine",
     date: "2024"
   },
   { 
