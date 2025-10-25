@@ -16,7 +16,7 @@ const contactInfo = [
 const socialLinks = [
   { name: "Instagram", url: "https://www.instagram.com/Ellaeshetu21", color: "hover:bg-pink-500/20" },
   { name: "Telegram", url: "https://t.me/Ela212", color: "hover:bg-blue-400/20" },
-  { name: "LinkedIn", url: "https://linkedin.com", color: "hover:bg-blue-500/20" },
+  { name: "LinkedIn", url: "https://www.linkedin.com/in/ela-eshetu-b8b47a332", color: "hover:bg-blue-500/20" },
   { name: "TikTok", url: "https://www.tiktok.com/@Ellapicture0", color: "hover:bg-gray-500/20" },
 ];
 
