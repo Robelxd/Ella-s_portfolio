@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Play, X } from "lucide-react";
 
+
 import wedding1 from "@/assets/wedding_5.jpg";
 import wedding2 from "@/assets/wedding-2.jpg";
 import wedding3 from "@/assets/wedding-3.jpg";
@@ -329,6 +330,7 @@ const Portfolio = () => {
                     <img
                       src={item.image}
                       alt={item.title}
+                      loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                   )}
