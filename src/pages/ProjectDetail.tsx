@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Instagram, Linkedin, Share2, Calendar, User, Briefcase } from "lucide-react";
@@ -5,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import wedding1 from "@/assets/wedding_5.jpg";
 import wedding2 from "@/assets/wedding-2.jpg";
 import wedding3 from "@/assets/wedding-3.jpg";
-import wedding6 from "@/assets/wedding_6.jpg";
+import wedding6 from "@/assets/wedding_6.avif";
 import wedding7 from "@/assets/wedding_7.jpg";
 import wedding8 from "@/assets/wedding_8.jpg";
 import street1 from "@/assets/street-1.jpg";
@@ -192,6 +193,32 @@ const ProjectDetail = () => {
   const navigate = useNavigate();
   const project = projectData[id || "1"];
 
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  /** REAL VIDEO LAZY LOADING */
+  useEffect(() => {
+    if (!videoRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const video = videoRef.current!;
+            const realSrc = video.dataset.src;
+            if (realSrc) {
+              video.src = realSrc;
+              video.load();
+            }
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.25 }
+    );
+
+    observer.observe(videoRef.current);
+  }, []);
+
   if (!project) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -200,6 +227,7 @@ const ProjectDetail = () => {
     );
   }
 
+  /** SHARE HANDLER */
   const shareProject = () => {
     if (navigator.share) {
       navigator.share({
@@ -216,24 +244,25 @@ const ProjectDetail = () => {
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
-        className="fixed top-8 left-8 z-50"
+        className="fixed top-4 left-4 z-50"
       >
         <Button
           onClick={() => navigate("/")}
           variant="outline"
-          className="backdrop-blur-lg bg-card/80 border-accent/30 hover:bg-accent/10"
+          className="backdrop-blur-lg bg-card/80 border-accent/30 hover:bg-accent/10 px-4 py-2"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Portfolio
+          Back
         </Button>
       </motion.div>
 
-      {/* Hero Banner */}
-      <section className="relative h-screen w-full overflow-hidden">
+      {/* Hero Section */}
+      <section className="relative min-h-[100svh] w-full overflow-hidden">
         <div className="absolute inset-0">
           <img
             src={project.image}
             alt={project.title}
+            loading="lazy"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background" />
@@ -254,9 +283,11 @@ const ProjectDetail = () => {
             >
               {project.category}
             </motion.span>
+
             <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-foreground via-accent to-foreground bg-clip-text text-transparent">
               {project.title}
             </h1>
+
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               {project.description}
             </p>
@@ -264,8 +295,8 @@ const ProjectDetail = () => {
         </div>
       </section>
 
-      {/* Project Details */}
-      <section className="py-24 px-6 bg-gradient-to-b from-background to-card">
+      {/* Information Section */}
+      <section className="py-20 px-6 bg-gradient-to-b from-background to-card">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -273,29 +304,12 @@ const ProjectDetail = () => {
             viewport={{ once: true }}
             className="grid md:grid-cols-3 gap-8 mb-16"
           >
-            <div className="flex items-center gap-4 p-6 bg-card rounded-lg border border-border">
-              <User className="w-8 h-8 text-accent" />
-              <div>
-                <p className="text-sm text-muted-foreground">Client</p>
-                <p className="font-semibold">{project.client}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 p-6 bg-card rounded-lg border border-border">
-              <Calendar className="w-8 h-8 text-accent" />
-              <div>
-                <p className="text-sm text-muted-foreground">Date</p>
-                <p className="font-semibold">{project.date}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 p-6 bg-card rounded-lg border border-border">
-              <Briefcase className="w-8 h-8 text-accent" />
-              <div>
-                <p className="text-sm text-muted-foreground">Category</p>
-                <p className="font-semibold">{project.category}</p>
-              </div>
-            </div>
+            <InfoCard icon={<User className="w-8 h-8 text-accent" />} label="Client" value={project.client} />
+            <InfoCard icon={<Calendar className="w-8 h-8 text-accent" />} label="Date" value={project.date} />
+            <InfoCard icon={<Briefcase className="w-8 h-8 text-accent" />} label="Category" value={project.category} />
           </motion.div>
 
+          {/* Goals */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -308,6 +322,7 @@ const ProjectDetail = () => {
             </p>
           </motion.div>
 
+          {/* Tools */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -316,9 +331,9 @@ const ProjectDetail = () => {
           >
             <h2 className="text-3xl font-bold mb-6">Tools Used</h2>
             <div className="flex flex-wrap gap-3">
-              {project.tools.map((tool: string, index: number) => (
+              {project.tools?.map((tool, i) => (
                 <span
-                  key={index}
+                  key={i}
                   className="px-4 py-2 bg-accent/10 border border-accent/30 rounded-full text-accent font-medium"
                 >
                   {tool}
@@ -329,47 +344,47 @@ const ProjectDetail = () => {
         </div>
       </section>
 
-      {/* Photo Gallery */}
-      <section className="py-24 px-6 bg-card">
+      {/* Gallery Section */}
+      <section className="py-20 px-6 bg-card">
         <div className="max-w-7xl mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
             className="text-4xl font-bold mb-12 text-center"
           >
             Project Gallery
           </motion.h2>
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {project.gallery.map((image: string, index: number) => (
+            {project.gallery?.map((image, index) => (
               <motion.div
-                key={index}
+                key={image + index}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: index * 0.08 }}
                 whileHover={{ scale: 1.05 }}
                 className="relative aspect-square overflow-hidden rounded-lg group cursor-pointer"
               >
                 <img
                   src={image}
-                  alt={`Gallery ${index + 1}`}
+                  loading="lazy"
+                  alt={`Gallery item ${index + 1}`}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Behind the Scenes */}
+      {/* Behind The Scenes */}
       <section className="py-24 px-6 bg-gradient-to-b from-card to-background">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
             className="text-center mb-12"
           >
             <h2 className="text-4xl font-bold mb-4">Behind the Scenes</h2>
@@ -381,20 +396,24 @@ const ProjectDetail = () => {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
             className="grid md:grid-cols-2 gap-8 items-center mb-12"
           >
+            {/* LAZY VIDEO */}
             <div className="relative aspect-video rounded-lg overflow-hidden">
               <video
-                src={project.videoUrl}
+                ref={videoRef}
+                data-src={project.videoUrl}
+                preload="none"
                 controls
-                className="w-full h-full object-cover"
                 poster={project.behindTheScenes}
+                className="w-full h-full object-cover"
               />
             </div>
+
             <div className="relative aspect-square rounded-lg overflow-hidden">
               <img
                 src={project.behindTheScenes}
+                loading="lazy"
                 alt="Behind the scenes"
                 className="w-full h-full object-cover"
               />
@@ -403,16 +422,15 @@ const ProjectDetail = () => {
         </div>
       </section>
 
-      {/* Share Section */}
+      {/* Share */}
       <section className="py-16 px-6 bg-card border-t border-border">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
           className="max-w-4xl mx-auto text-center"
         >
           <h3 className="text-2xl font-bold mb-6">Share This Project</h3>
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center gap-4 flex-wrap">
             <Button
               onClick={shareProject}
               className="bg-accent text-accent-foreground hover:bg-accent/90"
@@ -420,6 +438,7 @@ const ProjectDetail = () => {
               <Share2 className="w-4 h-4 mr-2" />
               Share
             </Button>
+
             <Button
               onClick={() => window.open("https://instagram.com", "_blank")}
               variant="outline"
@@ -428,6 +447,7 @@ const ProjectDetail = () => {
               <Instagram className="w-4 h-4 mr-2" />
               Instagram
             </Button>
+
             <Button
               onClick={() => window.open("https://linkedin.com", "_blank")}
               variant="outline"
@@ -442,5 +462,24 @@ const ProjectDetail = () => {
     </div>
   );
 };
+
+/* Reusable Info Card */
+const InfoCard = ({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) => (
+  <div className="flex items-center gap-4 p-6 bg-card rounded-lg border border-border">
+    {icon}
+    <div>
+      <p className="text-sm text-muted-foreground">{label}</p>
+      <p className="font-semibold">{value}</p>
+    </div>
+  </div>
+);
 
 export default ProjectDetail;

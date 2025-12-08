@@ -2,12 +2,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Play, X } from "lucide-react";
+import LazyMedia from "@/components/LazyMedia";
 
 
 import wedding1 from "@/assets/wedding_5.jpg";
 import wedding2 from "@/assets/wedding-2.jpg";
 import wedding3 from "@/assets/wedding-3.jpg";
-import wedding6 from "@/assets/wedding_6.jpg";
+import wedding6 from "@/assets/wedding_6.avif";
 import wedding7 from "@/assets/wedding_7.jpg";
 import wedding8 from "@/assets/wedding_8.jpg";
 import street1 from "@/assets/street-1.jpg";
@@ -219,236 +220,190 @@ const portfolioItems: PortfolioItem[] = [
   },
 ];
 
-const categories = ["All", "Portrait", "Street", "Wedding", "Birthday", "Festival",  "Commercial"];
+const categories = [
+  "All",
+  "Portrait",
+  "Street",
+  "Wedding",
+  "Birthday",
+  "Festival",
+  "Commercial",
+];
 
-const isExternalUrl = (url?: string) => !!url && /^https?:\/\//i.test(url || "");
+// External URL check
+const isExternalUrl = (url?: string) => !!url && /^https?:\/\//i.test(url);
 
+// Convert YouTube/Vimeo to embed
 const makeEmbedUrl = (url: string) => {
-  // Convert youtube watch links to embed
-  if (url.includes("youtube.com/watch")) return url.replace("watch?v=", "embed/");
-  if (url.includes("youtu.be/")) return url.replace("youtu.be/", "www.youtube.com/embed/");
-  // Vimeo or other direct embed links likely already ok
+  if (url.includes("youtube.com/watch"))
+    return url.replace("watch?v=", "embed/");
+  if (url.includes("youtu.be/"))
+    return url.replace("youtu.be/", "www.youtube.com/embed/");
   return url;
 };
 
 const Portfolio = () => {
   const navigate = useNavigate();
-  const [filter, setFilter] = useState<string>("All");
+  const [filter, setFilter] = useState("All");
   const [hoveredId, setHoveredId] = useState<number | null>(null);
-  const [activeItem, setActiveItem] = useState<PortfolioItem | null>(null);
+  const [activeItem, setActiveItem] = useState<any | null>(null);
 
-  const filteredItems = filter === "All"
-    ? portfolioItems
-    : portfolioItems.filter((it) => it.category === filter);
+  const filteredItems =
+    filter === "All"
+      ? portfolioItems
+      : portfolioItems.filter((it) => it.category === filter);
 
   return (
-    <section id="Portfolio" className=" id = Portfolio py-24 px-6 bg-gradient-to-b from-background to-card">
+    <section className="py-24 px-6 bg-gradient-to-b from-background to-card">
       <div className="max-w-7xl mx-auto">
+        {/* Page Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-5xl md:text-6xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-accent to-foreground bg-clip-text text-transparent">
-              Portfolio
-            </span>
+          <h2 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-accent to-foreground bg-clip-text text-transparent">
+            Portfolio
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            A curated selection of my finest work across various photographic disciplines
+            A selection of my finest work across different photographic
+            disciplines.
           </p>
         </motion.div>
 
-        {/* Category Filter */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-wrap justify-center gap-3 mb-12"
-        >
-          {categories.map((category) => (
+        {/* Category Filters */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {categories.map((cat) => (
             <button
-              key={category}
-              onClick={() => setFilter(category)}
+              key={cat}
+              onClick={() => setFilter(cat)}
               className={`px-6 py-2 rounded-full transition-all duration-300 ${
-                filter === category
-                  ? "bg-accent text-accent-foreground shadow-amber"
+                filter === cat
+                  ? "bg-accent text-accent-foreground shadow-lg"
                   : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
               }`}
             >
-              {category}
+              {cat}
             </button>
           ))}
-        </motion.div>
+        </div>
 
-        {/* Portfolio Grid */}
+        {/* Grid Items */}
         <AnimatePresence mode="wait">
           <motion.div
             key={filter}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {filteredItems.map((item, idx) => (
               <motion.div
                 key={item.id}
-                initial={{ opacity: 0, scale: 0.95, rotateY: -8 }}
-                animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                transition={{ duration: 0.6, delay: idx * 0.06, type: "spring", stiffness: 100 }}
-                whileHover={{ scale: 1.02, transition: { duration: 0.25 } }}
+                className={`group relative rounded-lg overflow-hidden cursor-pointer shadow-xl ${
+                  item.aspect === "portrait"
+                    ? "row-span-2"
+                    : item.aspect === "square"
+                    ? "aspect-square"
+                    : "aspect-video"
+                }`}
                 onMouseEnter={() => setHoveredId(item.id)}
                 onMouseLeave={() => setHoveredId(null)}
-                onClick={() => {
-                  if (item.type === "video") {
-                    setActiveItem(item);
-                  } else {
-                    navigate(`/project/${item.id}`);
-                  }
-                }}
-                className={`group relative overflow-hidden rounded-lg cursor-pointer shadow-xl ${
-                  item.aspect === "portrait" ? "row-span-2" : item.aspect === "square" ? "aspect-square" : "aspect-video"
-                }`}
+                onClick={() =>
+                  item.type === "video"
+                    ? setActiveItem(item)
+                    : navigate(`/project/${item.id}`)
+                }
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: idx * 0.05 }}
               >
-                {/* Thumbnail / Hover Preview */}
-                <div className="relative w-full h-full">
-                  {item.type === "video" && hoveredId === item.id ? (
-                    // Hover preview: muted autoplay
-                    <video
-                      src={item.videoUrl}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                  )}
+                {/* Optimized Image/Video with poster */}
+                <LazyMedia
+                  src={item.type === "video" ? item.videoUrl : item.image}
+                  type={item.type}
+                  poster={item.image}
+                  autoPlayOnHover={item.type === "video"}
+                  className="w-full h-full"
+                />
 
-                  {/* Cinematic gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent pointer-events-none" />
+                {/* Dark overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
 
-                  {/* Play button / Icon */}
-                  {item.type === "video" && (
-                    <motion.div
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: hoveredId === item.id ? 1.05 : 0.9, opacity: hoveredId === item.id ? 1 : 0.95 }}
-                      transition={{ duration: 0.25 }}
-                      className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                    >
-                      <div className="rounded-full bg-black/40 p-4 backdrop-blur-sm shadow-2xl ring-1 ring-white/10">
-                        <div className="relative">
-                          <div className="absolute -inset-2 rounded-full blur-xl opacity-30 bg-gradient-to-r from-accent to-foreground/60" />
-                          <Play className="w-8 h-8 text-white relative z-10" />
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </div>
+                {/* Play icon for videos */}
+                {item.type === "video" && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-black/40 p-4 rounded-full backdrop-blur-md">
+                      <Play className="text-white w-8 h-8" />
+                    </div>
+                  </div>
+                )}
 
-                {/* Bottom overlay content */}
+                {/* Hover Title */}
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: hoveredId === item.id ? 1 : 0 }}
-                  transition={{ duration: 0.35 }}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{
+                    opacity: hoveredId === item.id ? 1 : 0,
+                    y: hoveredId === item.id ? 0 : 15,
+                  }}
                   className="absolute bottom-0 left-0 right-0 p-6"
                 >
-                  <div className="bg-gradient-to-t from-black/60 via-black/30 to-transparent backdrop-blur-sm rounded-t-xl p-4">
-                    <h3 className="text-2xl font-bold text-white">{item.title}</h3>
-                    <p className="text-accent font-medium">{item.category}</p>
-                    <p className="text-muted-foreground text-sm mt-2">{item.description}</p>
+                  <div className="bg-black/60 p-4 rounded-lg backdrop-blur-sm">
+                    <h3 className="text-xl font-bold text-white">
+                      {item.title}
+                    </h3>
+                    <p className="text-accent">{item.category}</p>
                   </div>
                 </motion.div>
-
-                {/* Focus ring */}
-                <motion.div
-                  className={`absolute inset-0 rounded-lg ring-2 ring-inset transition-all duration-300 ${hoveredId === item.id ? "ring-accent/40" : "ring-transparent"}`}
-                />
               </motion.div>
             ))}
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Cinematic Video Modal */}
+      {/* VIDEO MODAL */}
       <AnimatePresence>
         {activeItem && (
           <motion.div
             className="fixed inset-0 z-50 flex items-center justify-center p-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
           >
-            {/* Blurred background layer */}
-            <motion.div
+            <div
               className="absolute inset-0 bg-black/70 backdrop-blur-md"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
               onClick={() => setActiveItem(null)}
             />
 
-            {/* Modal content */}
             <motion.div
-              initial={{ y: 20, opacity: 0, scale: 0.98 }}
-              animate={{ y: 0, opacity: 1, scale: 1 }}
-              exit={{ y: 20, opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.35 }}
-              className="relative z-10 w-full max-w-5xl mx-auto"
-              onClick={(e) => e.stopPropagation()}
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              className="relative max-w-5xl w-full mx-auto"
             >
-              {/* video / embed container */}
-              <div className="relative rounded-xl overflow-hidden shadow-2xl border border-white/10">
-                {/* if external embed (YouTube/Vimeo) */}
-                {activeItem.videoUrl && isExternalUrl(activeItem.videoUrl) ? (
+              <div className="rounded-xl overflow-hidden shadow-2xl border border-white/10">
+                {isExternalUrl(activeItem.videoUrl) ? (
                   <iframe
-                    src={makeEmbedUrl(activeItem.videoUrl!)}
-                    title={activeItem.title}
-                    allow="autoplay; fullscreen; picture-in-picture"
+                    src={makeEmbedUrl(activeItem.videoUrl)}
                     className="w-full aspect-video"
-                    frameBorder={0}
+                    loading="lazy"
+                    allow="autoplay; fullscreen"
                   />
                 ) : (
                   <video
-                    key={activeItem.videoUrl}
                     src={activeItem.videoUrl}
                     controls
                     autoPlay
+                    preload="none"
+                    poster={activeItem.image}
                     className="w-full aspect-video object-cover"
                   />
                 )}
-
-                {/* Cinematic overlay with title/description */}
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.12 }}
-                  className="absolute left-6 bottom-6 right-6 pointer-events-none"
-                >
-                  <div className="bg-gradient-to-t from-black/70 via-black/40 to-transparent rounded-lg p-4 backdrop-blur-sm">
-                    <h3 className="text-2xl md:text-3xl font-bold text-white">{activeItem.title}</h3>
-                    <p className="text-muted-foreground mt-1">{activeItem.description}</p>
-                  </div>
-                </motion.div>
               </div>
 
-              {/* Close button */}
               <button
                 onClick={() => setActiveItem(null)}
-                aria-label="Close video"
-                className="absolute top-6 right-6 z-20 bg-black/50 p-2 rounded-full hover:bg-black/70 transition"
+                className="absolute top-4 right-4 bg-black/50 p-2 rounded-full"
               >
-                <X className="w-5 h-5 text-white" />
+                <X className="text-white w-6 h-6" />
               </button>
             </motion.div>
           </motion.div>
