@@ -259,12 +259,13 @@ const ProjectDetail = () => {
       {/* Hero Section */}
       <section className="relative min-h-[100svh] w-full overflow-hidden">
         <div className="absolute inset-0">
-          <img
-            src={project.image}
-            alt={project.title}
-            loading="lazy"
-            className="w-full h-full object-cover"
-          />
+<img
+  src={project.image}
+  alt={project.title}
+  loading="lazy"
+  className="w-full h-auto md:h-full md:object-cover object-contain"
+/>
+
           <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background" />
         </div>
 
@@ -364,14 +365,16 @@ const ProjectDetail = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08 }}
                 whileHover={{ scale: 1.05 }}
-                className="relative aspect-square overflow-hidden rounded-lg group cursor-pointer"
+                className="relative w-full overflow-hidden rounded-lg group cursor-pointer"
+
               >
                 <img
-                  src={image}
-                  loading="lazy"
-                  alt={`Gallery item ${index + 1}`}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
+  src={image}
+  loading="lazy"
+  alt={`Gallery item ${index + 1}`}
+  className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-110"
+/>
+
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </motion.div>
             ))}
@@ -399,14 +402,14 @@ const ProjectDetail = () => {
             className="grid md:grid-cols-2 gap-8 items-center mb-12"
           >
             {/* LAZY VIDEO */}
-            <div className="relative aspect-video rounded-lg overflow-hidden">
+            <div className="relative w-full overflow-hidden rounded-lg">
               <video
                 ref={videoRef}
                 data-src={project.videoUrl}
                 preload="none"
                 controls
                 poster={project.behindTheScenes}
-                className="w-full h-full object-cover"
+                className="w-full h-auto md:h-full object-contain md:object-cover"
               />
             </div>
 
@@ -415,7 +418,7 @@ const ProjectDetail = () => {
                 src={project.behindTheScenes}
                 loading="lazy"
                 alt="Behind the scenes"
-                className="w-full h-full object-cover"
+                className="w-full h-auto object-cover"
               />
             </div>
           </motion.div>

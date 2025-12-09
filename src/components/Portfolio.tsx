@@ -23,7 +23,8 @@ import weddingvid from "@/assets/wedding-vid.mp4";
 import wedthumb2 from "@/assets/wedthumb2.png";
 import bd from "@/assets/bd.jpg";
 import irrecha from "@/assets/irrecha.jpg";
-
+import huki_serimide from "@/assets/huki_serimide.mp4";
+import tt from "@/assets/tt.png";
 type PortfolioItem = {
   id: number;
   image: string;
@@ -218,6 +219,18 @@ const portfolioItems: PortfolioItem[] = [
     client: "Wedding Couple",
     date: "2024"
   },
+  { 
+    id: 17, 
+    image: tt, 
+    title: "Cinematic Showreel", 
+    category: "Commercial", 
+    aspect: "landscape",
+    type: "video",
+    videoUrl: huki_serimide,
+    description: "A cinematic blending wedding, street, and portrait photography.",
+    client: "Commercial Project",
+    date: "2025"
+  }
 ];
 
 const categories = [
