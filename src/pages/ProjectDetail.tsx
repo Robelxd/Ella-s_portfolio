@@ -257,44 +257,56 @@ const ProjectDetail = () => {
       </motion.div>
 
       {/* Hero Section */}
-      <section className="relative min-h-[100svh] w-full overflow-hidden">
-        <div className="absolute inset-0">
-<img
-  src={project.image}
-  alt={project.title}
-  loading="lazy"
-  className="w-full h-auto md:h-full md:object-cover object-contain"
-/>
+{/* Hero Section */}
+<section className="relative w-full pt-16 overflow-hidden bg-background">
+  <div className="w-full flex justify-center">
+    {/* Hero Image */}
+    <motion.img
+      src={project.image}
+      alt={project.title}
+      loading="lazy"
+      className="w-full md:max-w-4xl h-auto md:max-h-[90vh] object-contain rounded-b-2xl"
+      initial={{ y: 0 }}
+      whileInView={{ y: 0 }}
+      viewport={{ once: false }}
+      transition={{ ease: "easeOut", duration: 0.8 }}
+      animate={{ y: [0, -20] }} // subtle parallax scroll
+    />
+  </div>
 
-          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background" />
-        </div>
+  {/* Gradient overlay at the bottom */}
+  <div className="absolute bottom-0 left-0 w-full h-32 md:h-48 bg-gradient-to-t from-background/80 to-transparent" />
 
-        <div className="relative z-10 h-full flex items-end justify-center pb-20 px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-center max-w-4xl"
-          >
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="inline-block px-4 py-2 bg-accent/20 backdrop-blur-sm rounded-full text-accent text-sm font-medium mb-4"
-            >
-              {project.category}
-            </motion.span>
+  {/* Title & Description BELOW image */}
+  <div className="max-w-4xl mx-auto text-center mt-6 px-6 md:px-0">
+    <motion.span
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="inline-block px-4 py-2 bg-accent/20 backdrop-blur-sm rounded-full text-accent text-sm font-medium mb-4"
+    >
+      {project.category}
+    </motion.span>
 
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-foreground via-accent to-foreground bg-clip-text text-transparent">
-              {project.title}
-            </h1>
+    <motion.h1
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.2 }}
+      className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-foreground via-accent to-foreground bg-clip-text text-transparent"
+    >
+      {project.title}
+    </motion.h1>
 
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              {project.description}
-            </p>
-          </motion.div>
-        </div>
-      </section>
+    <motion.p
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.4 }}
+      className="text-lg md:text-xl text-muted-foreground leading-relaxed"
+    >
+      {project.description}
+    </motion.p>
+  </div>
+</section>
 
       {/* Information Section */}
       <section className="py-20 px-6 bg-gradient-to-b from-background to-card">
