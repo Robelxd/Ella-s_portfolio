@@ -101,21 +101,6 @@ const projectData: Record<string, any> = {
     behindTheScenes: street1,
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
   },
-  
-  "8": {
-    id: 8,
-    title: "Professional Presence",
-    category: "Portrait",
-    image: portrait,
-    client: "Corporate Photography",
-    date: "2024",
-    tools: ["Canon EOS R5", "85mm f/1.4", "Studio Lighting", "Lightroom", "Photoshop"],
-    description: "Professional portrait capturing confidence and charisma. The warm lighting and professional styling create an image that commands attention and respect.",
-    goals: "Create professional headshots that capture personality and confidence while delivering corporate-quality images with professional styling.",
-    gallery: [portrait],
-    behindTheScenes: portrait,
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
-  },
    "12": { 
       id: 12,  
       title: "Joyful Birthday", 

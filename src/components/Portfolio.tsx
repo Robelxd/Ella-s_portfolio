@@ -112,18 +112,6 @@ const portfolioItems: PortfolioItem[] = [
     date: "2024"
   },
   { 
-    id: 8, 
-    image: portrait, 
-    title: "Professional Presence", 
-    category: "Portrait", 
-    aspect: "portrait",
-    type: "image",
-    videoUrl: "",
-    description: "Professional portrait capturing confidence and charisma",
-    client: "Corporate Photography",
-    date: "2024"
-  },
-  { 
     id: 9, 
     image: showreel1, 
     title: "Cinematic Showreel", 
@@ -235,7 +223,6 @@ const portfolioItems: PortfolioItem[] = [
 
 const categories = [
   "All",
-  "Portrait",
   "Street",
   "Wedding",
   "Birthday",
